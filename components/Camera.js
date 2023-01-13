@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { Camera, CameraType, useCamera } from "expo-camera";
 import {
+  SafeAreaView,
   StyleSheet,
   Text,
   View,
   TouchableOpacity,
   Dimensions,
 } from "react-native";
+import DallE from "./DallE";
 
 const screenWidth = Dimensions.get("screen").width;
 const screenHeight = Dimensions.get("screen").height;
@@ -34,20 +36,23 @@ export default function CameraComponent() {
   };
 
   return (
-    <View style={styles.container}>
-      <Camera
-        style={styles.camera}
-        type={type}
-        width={screenWidth}
-        height={screenHeight}
-      >
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button} onPress={toggleCameraType}>
-            <Text style={styles.text}>Flip Camera</Text>
-          </TouchableOpacity>
-        </View>
-      </Camera>
-    </View>
+    <SafeAreaView>
+      <View style={styles.container}>
+        <Camera
+          style={styles.camera}
+          type={type}
+          width={screenWidth}
+          height={screenHeight}
+        >
+          <DallE />
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity style={styles.button} onPress={toggleCameraType}>
+              <Text style={styles.text}>Flip Camera</Text>
+            </TouchableOpacity>
+          </View>
+        </Camera>
+      </View>
+    </SafeAreaView>
   );
 }
 

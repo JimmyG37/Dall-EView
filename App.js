@@ -1,4 +1,5 @@
 import "react-native-url-polyfill/auto";
+import React, { useState, useEffect } from "react";
 import CameraComponent from "./components/Camera";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";

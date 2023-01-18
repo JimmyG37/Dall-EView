@@ -1,33 +1,70 @@
 import React, { useEffect, useState, useRef } from "react";
-import {
-  SafeAreaView,
-  View,
-  Image,
-  Text,
-  StyleSheet,
-  Animated,
-  PanResponder,
-} from "react-native";
+import { SafeAreaView, View, Image, Text, StyleSheet } from "react-native";
 import { OpenAIApi, Configuration } from "openai";
 import { OPENAI_API_KEY } from "@env";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+} from "react-native-reanimated";
 
 export default function DallE() {
   const [imageUrl, setImageUrl] = useState("");
   const [test, setTest] = useState("");
 
-  const pan = useRef(new Animated.ValueXY()).current;
+  const offset = useSharedValue({ x: 0, y: 0 });
+  const start = useSharedValue({ x: 0, y: 0 });
+  const scale = useSharedValue(1);
+  const savedScale = useSharedValue(1);
+  const rotation = useSharedValue(0);
+  const savedRotation = useSharedValue(0);
 
-  const panResponder = useRef(
-    PanResponder.create({
-      onMoveShouldSetPanResponder: () => true,
-      onPanResponderMove: Animated.event([null, { dx: pan.x, dy: pan.y }], {
-        useNativeDriver: false,
-      }),
-      onPanResponderRelease: () => {
-        pan.extractOffset();
-      },
+  const animatedStyles = useAnimatedStyle(() => {
+    return {
+      transform: [
+        { translateX: offset.value.x },
+        { translateY: offset.value.y },
+        { scale: scale.value },
+        { rotateZ: `${rotation.value}rad` },
+      ],
+    };
+  });
+
+  const dragGesture = Gesture.Pan()
+    .averageTouches(true)
+    .onUpdate((e) => {
+      offset.value = {
+        x: e.translationX + start.value.x,
+        y: e.translationY + start.value.y,
+      };
     })
-  ).current;
+    .onEnd(() => {
+      start.value = {
+        x: offset.value.x,
+        y: offset.value.y,
+      };
+    });
+
+  const zoomGesture = Gesture.Pinch()
+    .onUpdate((event) => {
+      scale.value = savedScale.value * event.scale;
+    })
+    .onEnd(() => {
+      savedScale.value = scale.value;
+    });
+
+  const rotateGesture = Gesture.Rotation()
+    .onUpdate((event) => {
+      rotation.value = savedRotation.value + event.rotation;
+    })
+    .onEnd(() => {
+      savedRotation.value = rotation.value;
+    });
+
+  const composed = Gesture.Simultaneous(
+    dragGesture,
+    Gesture.Simultaneous(zoomGesture, rotateGesture)
+  );
 
   const configuration = new Configuration({
     apiKey: OPENAI_API_KEY,
@@ -59,16 +96,8 @@ export default function DallE() {
   }, []);
 
   return (
-    <SafeAreaView>
-      <Animated.View
-        style={[
-          styles.imageContainer,
-          {
-            transform: [{ translateX: pan.x }, { translateY: pan.y }],
-          },
-        ]}
-        {...panResponder.panHandlers}
-      >
+    <GestureDetector gesture={composed}>
+      <Animated.View style={[styles.imageContainer, animatedStyles]}>
         {test.length > 0 ? (
           <Image
             style={styles.image}
@@ -80,7 +109,7 @@ export default function DallE() {
           <Text style={styles.titleText}>Sad Face</Text>
         )}
       </Animated.View>
-    </SafeAreaView>
+    </GestureDetector>
   );
 }
 

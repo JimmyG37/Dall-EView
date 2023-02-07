@@ -8,9 +8,10 @@ import Animated, {
   useAnimatedStyle,
 } from "react-native-reanimated";
 
-export default function DallE() {
-  const [imageUrl, setImageUrl] = useState("");
-  const [test, setTest] = useState("");
+export default function DallE({ imageUrl }) {
+  const [test, setTest] = useState(
+    "https://vignette.wikia.nocookie.net/joke-battles/images/4/40/18360-doge-doge-simple.jpg/revision/latest?cb=20151209161638"
+  );
 
   const offset = useSharedValue({ x: 0, y: 0 });
   const start = useSharedValue({ x: 0, y: 0 });
@@ -66,43 +67,14 @@ export default function DallE() {
     Gesture.Simultaneous(zoomGesture, rotateGesture)
   );
 
-  const configuration = new Configuration({
-    apiKey: OPENAI_API_KEY,
-  });
-  const openai = new OpenAIApi(configuration);
-
-  const generateImage = async () => {
-    try {
-      const res = await openai.createImage({
-        prompt: "A fresh lemon",
-        n: 1,
-        size: "256x256",
-      });
-      setImageUrl(res.data.data[0].url);
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
-  const setLemon = () => {
-    setTest(
-      "https://vignette.wikia.nocookie.net/joke-battles/images/4/40/18360-doge-doge-simple.jpg/revision/latest?cb=20151209161638"
-    );
-  };
-
-  useEffect(() => {
-    // generateImage();
-    setLemon();
-  }, []);
-
   return (
     <GestureDetector gesture={composed}>
       <Animated.View style={[styles.imageContainer, animatedStyles]}>
-        {test.length > 0 ? (
+        {imageUrl.length > 0 ? (
           <Image
             style={styles.image}
             source={{
-              uri: test,
+              uri: imageUrl,
             }}
           />
         ) : (

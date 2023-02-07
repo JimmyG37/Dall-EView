@@ -8,10 +8,11 @@ import {
   TouchableOpacity,
   Dimensions,
   Image,
+  ImageBackground,
   Alert,
   Button,
 } from "react-native";
-import DallE from "./DallE";
+import Preview from "./Preview";
 import * as MediaLibrary from "expo-media-library";
 
 const screenWidth = Dimensions.get("screen").width;
@@ -54,43 +55,35 @@ export default function CameraComponent() {
     setPhoto(newPhoto);
   };
 
-  if (photo) {
-    let savePhoto = () => {
-      MediaLibrary.saveToLibraryAsync(photo.uri).then(() => {
-        setPhoto(undefined);
-      });
-    };
-
-    return (
-      <SafeAreaView style={styles.photo}>
-        <Image
-          style={styles.preview}
-          source={{ uri: "data:image/jpg;base64," + photo.base64 }}
-        />
-        {hasMediaLibraryPermission ? (
-          <Button title="Save" onPress={savePhoto} />
-        ) : undefined}
-        <Button title="Discard" onPress={() => setPhoto(undefined)} />
-      </SafeAreaView>
-    );
-  }
+  const resetPhoto = () => {
+    setPhoto(undefined);
+  };
 
   return (
-    <View style={styles.container}>
-      <Camera
-        ref={cameraRef}
-        style={styles.camera}
-        type={type}
-        width={screenWidth}
-        height={screenHeight}
-      >
-        <DallE />
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button} onPress={takePhoto}>
-            <Text style={styles.text}>Take Photo</Text>
-          </TouchableOpacity>
+    <View style={{ width: "100%", height: "100%" }}>
+      {!photo ? (
+        <View style={styles.container}>
+          <Camera
+            ref={cameraRef}
+            style={styles.camera}
+            type={type}
+            width={screenWidth}
+            height={screenHeight}
+          >
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity style={styles.button} onPress={takePhoto}>
+                <Text style={styles.text}>Take Photo</Text>
+              </TouchableOpacity>
+            </View>
+          </Camera>
         </View>
-      </Camera>
+      ) : (
+        <Preview
+          photo={photo}
+          resetPhoto={resetPhoto}
+          hasMediaLibraryPermission={hasMediaLibraryPermission}
+        />
+      )}
     </View>
   );
 }
@@ -120,10 +113,5 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 18,
-  },
-  photo: {
-    width: "100%",
-    height: "100%",
-    resizeMode: "contain",
   },
 });

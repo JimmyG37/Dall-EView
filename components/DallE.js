@@ -1,11 +1,13 @@
 import React, { useEffect, useState, useRef } from "react";
 import { SafeAreaView, View, Image, Text, StyleSheet } from "react-native";
+import * as Haptics from "expo-haptics";
 import { OpenAIApi, Configuration } from "openai";
 import { OPENAI_API_KEY } from "@env";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
+  runOnJS,
 } from "react-native-reanimated";
 
 export default function DallE({ imageUrl }) {
@@ -19,6 +21,11 @@ export default function DallE({ imageUrl }) {
   const savedScale = useSharedValue(1);
   const rotation = useSharedValue(0);
   const savedRotation = useSharedValue(0);
+  const isFixed = useSharedValue(false);
+
+  const longHaptic = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+  };
 
   const animatedStyles = useAnimatedStyle(() => {
     return {
@@ -34,10 +41,12 @@ export default function DallE({ imageUrl }) {
   const dragGesture = Gesture.Pan()
     .averageTouches(true)
     .onUpdate((e) => {
-      offset.value = {
-        x: e.translationX + start.value.x,
-        y: e.translationY + start.value.y,
-      };
+      if (!isFixed.value) {
+        offset.value = {
+          x: e.translationX + start.value.x,
+          y: e.translationY + start.value.y,
+        };
+      }
     })
     .onEnd(() => {
       start.value = {
@@ -48,7 +57,9 @@ export default function DallE({ imageUrl }) {
 
   const zoomGesture = Gesture.Pinch()
     .onUpdate((event) => {
-      scale.value = savedScale.value * event.scale;
+      if (!isFixed.value) {
+        scale.value = savedScale.value * event.scale;
+      }
     })
     .onEnd(() => {
       savedScale.value = scale.value;
@@ -56,25 +67,35 @@ export default function DallE({ imageUrl }) {
 
   const rotateGesture = Gesture.Rotation()
     .onUpdate((event) => {
-      rotation.value = savedRotation.value + event.rotation;
+      if (!isFixed.value) {
+        rotation.value = savedRotation.value + event.rotation;
+      }
     })
     .onEnd(() => {
       savedRotation.value = rotation.value;
     });
 
+  const longPress = Gesture.LongPress()
+    .minDuration(500)
+    .onStart(() => {
+      isFixed.value = !isFixed.value;
+      runOnJS(longHaptic)();
+    });
+
   const composed = Gesture.Simultaneous(
     dragGesture,
-    Gesture.Simultaneous(zoomGesture, rotateGesture)
+    Gesture.Simultaneous(zoomGesture, rotateGesture),
+    longPress
   );
 
   return (
     <GestureDetector gesture={composed}>
       <Animated.View style={[styles.imageContainer, animatedStyles]}>
-        {imageUrl.length > 0 ? (
+        {test.length > 0 ? (
           <Image
             style={styles.image}
             source={{
-              uri: imageUrl,
+              uri: test,
             }}
           />
         ) : (

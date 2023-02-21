@@ -7,7 +7,12 @@ import { StyleSheet, Text, View } from "react-native";
 
 export default function App() {
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
+    <GestureHandlerRootView
+      style={{
+        flex: 1,
+        backgroundColor: "transparent",
+      }}
+    >
       <View style={styles.container}>
         <CameraComponent />
         <StatusBar style="auto" />
@@ -19,7 +24,7 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "black",
     alignItems: "center",
     justifyContent: "center",
   },

@@ -1,5 +1,13 @@
 import React, { useEffect, useState, useRef } from "react";
-import { SafeAreaView, View, Image, Text, StyleSheet } from "react-native";
+import {
+  SafeAreaView,
+  View,
+  Image,
+  Text,
+  StyleSheet,
+  PanResponder,
+  ActivityIndicator,
+} from "react-native";
 import * as Haptics from "expo-haptics";
 import { OpenAIApi, Configuration } from "openai";
 import { OPENAI_API_KEY } from "@env";
@@ -10,13 +18,15 @@ import Animated, {
   runOnJS,
 } from "react-native-reanimated";
 
-export default function DallE({ imageUrl }) {
+export default function DallE({ imageUrl, loading }) {
   const [test, setTest] = useState(
     "https://vignette.wikia.nocookie.net/joke-battles/images/4/40/18360-doge-doge-simple.jpg/revision/latest?cb=20151209161638"
   );
 
   const offset = useSharedValue({ x: 0, y: 0 });
   const start = useSharedValue({ x: 0, y: 0 });
+  const maskOffset = useSharedValue({ x: 0, y: 0 });
+  const maskStart = useSharedValue({ x: 0, y: 0 });
   const scale = useSharedValue(1);
   const savedScale = useSharedValue(1);
   const rotation = useSharedValue(0);
@@ -38,6 +48,15 @@ export default function DallE({ imageUrl }) {
     };
   });
 
+  const maskStyles = useAnimatedStyle(() => {
+    return {
+      transform: [
+        { translateX: maskOffset.value.x },
+        { translateY: maskOffset.value.y },
+      ],
+    };
+  });
+
   const dragGesture = Gesture.Pan()
     .averageTouches(true)
     .onUpdate((e) => {
@@ -46,12 +65,22 @@ export default function DallE({ imageUrl }) {
           x: e.translationX + start.value.x,
           y: e.translationY + start.value.y,
         };
+      } else {
+        maskOffset.value = {
+          x: e.translationX + maskStart.value.x,
+          y: e.translationY + maskStart.value.y,
+        };
       }
     })
     .onEnd(() => {
       start.value = {
         x: offset.value.x,
         y: offset.value.y,
+      };
+
+      maskStart.value = {
+        x: maskStart.value.x,
+        y: maskStart.value.y,
       };
     });
 
@@ -91,15 +120,23 @@ export default function DallE({ imageUrl }) {
   return (
     <GestureDetector gesture={composed}>
       <Animated.View style={[styles.imageContainer, animatedStyles]}>
-        {test.length > 0 ? (
+        {loading ? (
+          <SafeAreaView style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="#999999" />
+            <Text style={styles.titleText}>Generating...</Text>
+          </SafeAreaView>
+        ) : (
+          <></>
+        )}
+        {imageUrl.length > 0 ? (
           <Image
             style={styles.image}
             source={{
-              uri: test,
+              uri: imageUrl,
             }}
           />
         ) : (
-          <Text style={styles.titleText}>Sad Face</Text>
+          <></>
         )}
       </Animated.View>
     </GestureDetector>
@@ -109,6 +146,11 @@ export default function DallE({ imageUrl }) {
 const styles = StyleSheet.create({
   imageContainer: {
     overflow: "visible",
+  },
+  maskContainer: {
+    width: "100%",
+    height: "100%",
+    backgroundColor: "white",
   },
   image: {
     width: "100%",
@@ -120,5 +162,13 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontFamily: "Cochin",
     textAlign: "center",
+    textShadowColor: "white",
+    textShadowOffset: { width: 5, height: 5 },
+    textShadowRadius: 10,
+  },
+  loadingContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    top: 200,
   },
 });

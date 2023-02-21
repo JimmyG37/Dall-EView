@@ -5,7 +5,8 @@ Dall-Ecam is an iOS camera app that allows you to generate images from scratch b
 Dall-Ecam uses OpenAI's Images API for the image generation.
 
 "Sun wearing glasses with a blue sky background"
-![Alt Text](https://media.giphy.com/media/1mrT5SWeVXSkbXjMty/giphy.gif)
+
+<img src="https://media.giphy.com/media/1mrT5SWeVXSkbXjMty/giphy.gif" />
 
 ## Installation
 

@@ -6,7 +6,7 @@ Dall-Ecam uses OpenAI's Images API for the image generation.
 
 "Sun wearing glasses with a blue sky background"
 
-![demo](https://media.giphy.com/media/1mrT5SWeVXSkbXjMty/giphy.gif)
+![demo](demo.gif)
 
 ## Installation
 

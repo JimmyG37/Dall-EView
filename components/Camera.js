@@ -14,6 +14,7 @@ import {
 } from "react-native";
 import Preview from "./Preview";
 import * as MediaLibrary from "expo-media-library";
+import * as Haptics from "expo-haptics";
 
 const screenWidth = Dimensions.get("screen").width;
 const screenHeight = Dimensions.get("screen").height;
@@ -71,9 +72,15 @@ export default function CameraComponent() {
             height={screenHeight}
           >
             <View style={styles.buttonContainer}>
-              <TouchableOpacity style={styles.button} onPress={takePhoto}>
-                <Text style={styles.text}>Take Photo</Text>
-              </TouchableOpacity>
+              <View style={styles.buttonBorder}>
+                <TouchableOpacity
+                  style={styles.button}
+                  onPress={() => {
+                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+                    takePhoto();
+                  }}
+                />
+              </View>
             </View>
           </Camera>
         </View>
@@ -106,12 +113,21 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   button: {
-    backgroundColor: "white",
-    padding: 10,
+    backgroundColor: "rgba(52, 52, 52, 0.8)",
     margin: 20,
-    borderRadius: 5,
+    height: 66,
+    width: 66,
+    borderRadius: "50%",
   },
-  text: {
-    fontSize: 18,
+  buttonBorder: {
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "transparent",
+    margin: 20,
+    height: 76,
+    width: 76,
+    borderRadius: "50%",
+    borderColor: "black",
+    borderWidth: 3,
   },
 });

@@ -1,8 +1,8 @@
-## Dall-Ecam
+# **Dall-EView**
 
-Dall-Ecam is an iOS camera app that allows you to generate images from scratch based on a text prompt, and overlay them on top of the photo you took. The generated image can be scaled, rotated, and positioned anywhere on the photo and can be saved to the user's camera roll, or the photo can be discarded.
+Dall-EView is an iOS camera app that allows you to generate images from scratch based on a text prompt, and overlay them on top of the photo you took. The generated image can be scaled, rotated, and positioned anywhere on the photo and can be saved to the user's camera roll, or the photo can be discarded.
 
-Dall-Ecam uses OpenAI's Images API for the image generation.
+Dall-EView uses OpenAI's Images API for the image generation.
 
 "Sun wearing glasses with a blue sky background"
 
@@ -21,7 +21,7 @@ Dall-Ecam uses OpenAI's Images API for the image generation.
 - Start the app: yarn start
 - On your iOS device, install the Expo app from the App Store
 - Scan the QR code that appears in the terminal with the Expo app
-- The Dall-Ecam app should now open on your iOS device
+- The Dall-EView app should now open on your iOS device
 
 ## Features
 

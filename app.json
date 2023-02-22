@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "dall_ecam",
-    "slug": "dall_ecam",
+    "name": "dall_eview",
+    "slug": "dall_eview",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -15,8 +15,8 @@
       [
         "expo-media-library",
         {
-          "photosPermission": "Allow $(Dall-Ecam) to access your photos.",
-          "savePhotosPermission": "Allow $(Dall-Ecam) to save photos.",
+          "photosPermission": "Allow $(Dall-EView) to access your photos.",
+          "savePhotosPermission": "Allow $(Dall-EView) to save photos.",
           "isAccessMediaLocationEnabled": "true"
         }
       ]

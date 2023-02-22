@@ -1,5 +1,5 @@
 {
-  "name": "dall_ecam",
+  "name": "dall_eview",
   "version": "1.0.0",
   "scripts": {
     "start": "expo start --clear",
